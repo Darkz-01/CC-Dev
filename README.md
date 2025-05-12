@@ -1,4 +1,4 @@
-run `wget https://raw.githubusercontent.com/Darkz-001/CC-Dev/refs/heads/main/install.lua` to get intall.lua
+run `wget https://raw.githubusercontent.com/Darkz-001/CC-Dev/refs/heads/main/install.lua` to get install.lua
 
 
 this install script only works with .lua files
