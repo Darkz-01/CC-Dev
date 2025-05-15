@@ -5,7 +5,7 @@ codex.consideration = 'qqqaw' -- lets you put non-pattern iotas in spells
 
 codex.minds_ref = 'qaq'
 
-local function make_pattern_iota(angles, isHexTweaks)
+codex.make_pattern_iota = function(angles, isHexTweaks)
     pattern = {
         angles = angles,
         startDir = "EAST"
@@ -17,4 +17,4 @@ local function make_pattern_iota(angles, isHexTweaks)
 end
 
 
-return codex, make_pattern_iota
+return codex
