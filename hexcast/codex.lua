@@ -17,7 +17,7 @@ local function make_pattern_iota(angles, isHexTweaks)
     }
 
     if isHexTweaks then
-        pattern["iota$serde"] = 'pattern' -- tell hex tweaks that this is a pattern iota
+        pattern["iota$serde"] = 'hextweaks:pattern' -- tell hex tweaks that this is a pattern iota
     end
 
     return pattern
@@ -34,7 +34,7 @@ local function translate_to_iota(to_translate, isHexTweaks)
             }
 
             if isHexTweaks then
-                iota["iota$serde"] = 'vec3'
+                iota["iota$serde"] = 'hextweaks:vec3'
             end
             
             return iota
@@ -58,7 +58,7 @@ local function translate_to_iota(to_translate, isHexTweaks)
             end
 
             if isHexTweaks then
-                iota["iota$serde"] = 'list'
+                iota["iota$serde"] = 'hextweaks:list'
             end
             
             return iota 
