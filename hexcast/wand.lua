@@ -1,6 +1,6 @@
 codex = require('codex') -- require the codex for iota translation (and hermes)
 
-hermes = codex.translate_to_iota(codex.hermes) -- get the hermes pattern iota
+hermes = codex.translate_to_iota(codex.hermes, true) -- get the hermes pattern iota
 
 wand = peripheral.find('wand') -- needed to hexcast with hextweaks
 
