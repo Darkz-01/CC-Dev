@@ -19,6 +19,8 @@ local function make_pattern_iota(angles, isHexTweaks)
     if isHexTweaks then
         patterns ["iota$serde"] = 'pattern' -- tell hex tweaks that this is a pattern iota
     end
+
+    return pattern
 end
 
 -- uses iota$serde for hex tweaks to specify iota type
