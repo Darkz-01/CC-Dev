@@ -17,7 +17,7 @@ local function make_pattern_iota(angles, isHexTweaks)
     }
 
     if isHexTweaks then
-        patterns ["iota$serde"] = 'pattern' -- tell hex tweaks that this is a pattern iota
+        pattern["iota$serde"] = 'pattern' -- tell hex tweaks that this is a pattern iota
     end
 
     return pattern
@@ -70,7 +70,7 @@ local function translate_to_iota(to_translate, isHexTweaks)
             return to_translate
         end
     else
-        return to_translate
+        return to_translate -- numbers, booleans, nil
     end
 end
 
