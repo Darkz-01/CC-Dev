@@ -93,7 +93,7 @@ while true do
             
         else
             if message.action == 'add' then
-                table.insert(tbl[message.category][message.sub_category], message.word, message.desc)
+                tbl[message.category][message.sub_category][message.word] = message.desc
             
             elseif message.action == 'remove' then
                 tbl[message.category][message.sub_category][message.word] = nil
@@ -102,8 +102,8 @@ while true do
                 if message.rename then
                     tbl[message.category][message.sub_category][message.word] = nil
                 end
-                table.insert(tbl[message.category][message.sub_category], message.new_word, message.new_desc)
-                
+                tbl[message.category][message.sub_category][message.new_word] = message.new_desc
+            
             else
                 print('Unknown action: ' .. message.action)
             end

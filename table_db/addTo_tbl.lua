@@ -37,6 +37,8 @@ while true do
     local category = string.sub(subCat, 1, split-1)
     local sub_category = string.sub(subCat, split+1, #subCat)
     
+    if sub_category == '1' then sub_category = 1 end -- override for default category (no sub category)
+
     print(action .. ' ' .. subCat)
     
     if action == 'add' then
