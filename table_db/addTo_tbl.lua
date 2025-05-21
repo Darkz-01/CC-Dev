@@ -1,6 +1,10 @@
 SEND_PORT = 57
 RECV_PORT = 58
 
+-- NOTES
+-- subCat is a string with the category name and sub-category name seperated by ':'
+-- wordDesc is a string with the word and description seperated by ':'
+
 modem = peripheral.find('modem')
 
 modem.closeAll()
@@ -39,7 +43,7 @@ while true do
         local subCat = user_choose(initData.subCats) -- get the sub-category to do action on
         print()
     
-        local split = string.find(subCat, '-')
+        local split = string.find(subCat, ':')
     
         local category = string.sub(subCat, 1, split-1)
         local sub_category = string.sub(subCat, split+1, #subCat)
