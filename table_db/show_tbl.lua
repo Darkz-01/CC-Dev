@@ -1,5 +1,10 @@
 RECV_PORT = 57
 
+HEADER = {
+    'NOTE: entries in this table may randomly shuffle around',
+    'Also the descriptions kinda suck'
+}
+
 local file = ...
 file = file .. '.tbl'
 
@@ -18,7 +23,10 @@ local tbl = textutils.unserialize(text)
 
 function get_lines(tbl_db)
     lines = {}
-
+    for i, header in ipairs(HEADER) do
+        table.insert(lines, header)
+    end
+    
     for section, contents in pairs(tbl) do
         for sub_section, sub_tbl in pairs(contents) do
             if sub_section == 1 then
@@ -47,7 +55,7 @@ for i, line in pairs(lines) do
     monitor.write(line)
 end
 
-local pos = 1
+local pos = 0
 while true do
     local eventData = {os.pullEvent()}
     
@@ -59,14 +67,14 @@ while true do
             monitor.scroll(-1)
             if lines[pos] then
                 monitor.setCursorPos(1, 1)
-                monitor.write(lines[pos])
+                monitor.write(lines[pos+1])
             end
         elseif y + 5 > height then
             pos = pos + 1
             monitor.scroll(1)
             if lines[pos + height] then
                 monitor.setCursorPos(1, height)
-                monitor.write(lines[pos+height-1])
+                monitor.write(lines[pos+height])
             end
         end
     
@@ -117,7 +125,7 @@ while true do
 
             monitor.clear()
             for i, line in pairs(lines) do
-                monitor.setCursorPos(1, pos + i) -- offset re-render by pos
+                monitor.setCursorPos(1, i - pos) -- offset re-render by pos
                 monitor.write(line)
             end
         end
