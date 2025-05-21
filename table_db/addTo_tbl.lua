@@ -142,5 +142,35 @@ while true do
             category = category,
             sub_category = sub_category
         })
+    elseif action == 'Add Sub-Category' then
+        print('Name of new sub-category:')
+        local sub_category = io.read()
+        
+        modem.transmit(SEND_PORT, RECV_PORT, {
+            action = 'add_sub',
+            category = category,
+            sub_category = sub_category
+        })
+    elseif action == 'Remove Sub-Category' then
+        print('Sub-Category to remove:')
+        local sub_category = user_choose(initData.subCats)
+        local split = string.find(sub_category, ':')
+        sub_category = string.sub(sub_category, split+1, #sub_category)
+        
+        modem.transmit(SEND_PORT, RECV_PORT, {
+            action = 'remove_sub',
+            category = category,
+            sub_category = sub_category
+        })
+    elseif action == 'Rename Sub-Category' then
+        print('New name for sub-category:')
+        local new_name = io.read()
+        
+        modem.transmit(SEND_PORT, RECV_PORT, {
+            action = 'rename_sub',
+            category = category,
+            sub_category = sub_category,
+            new_name = new_name
+        })
     end
 end

@@ -48,6 +48,14 @@ function get_lines(tbl_db)
     return lines
 end
 
+function shallow_copy(t)
+    local copy = {}
+    for key, value in pairs(t) do
+        copy[key] = value
+    end
+    return copy
+end
+
 lines = get_lines(tbl)
 
 for i, line in pairs(lines) do
@@ -117,6 +125,21 @@ while true do
                 end
                 tbl[message.category][message.sub_category][message.new_word] = message.new_desc
             
+            elseif message.action == 'add_sub' then
+                tbl[message.category][message.sub_category] = {}
+            
+            elseif message.action == 'remove_sub' then
+                tbl[message.category][message.sub_category] = nil
+            
+            elseif message.action == 'rename_sub' then
+                local old_name = message.sub_category
+                local new_name = message.new_name
+                
+                if tbl[message.category][old_name] then
+                    tbl[message.category][new_name] = shallow_copy(tbl[message.category][old_name])
+                    tbl[message.category][old_name] = nil
+                end
+                 
             else
                 print('Unknown action: ' .. message.action)
             end
