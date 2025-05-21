@@ -23,31 +23,43 @@ function user_choose(options)
 end
 
 
-modem.transmit(SEND_PORT, RECV_PORT, {action='get_subcat'})
-local _, _, _, _, subCats, _ = os.pullEvent('modem_message')
+modem.transmit(SEND_PORT, RECV_PORT, {action='init_addTo'})
+local _, _, _, _, initData, _ = os.pullEvent('modem_message')
 
-actions = {'add', 'get', 'edit', 'remove'}
+-- initData = {[categories], [subCats]}
+
+local actions = {'Add Word', 'Get Words', 'Edit Word', 'Remove Word', 'Add Sub-Category', 'Remove Sub-Category', 'Rename Sub-Category'}
 
 while true do
     local action = user_choose(actions)
-    local subCat = user_choose(subCats)
-    
-    local split = string.find(subCat, '-')
-    
-    local category = string.sub(subCat, 1, split-1)
-    local sub_category = string.sub(subCat, split+1, #subCat)
-    
-    if sub_category == '1' then sub_category = 1 end -- override for default category (no sub category)
+    print() -- spacing
 
-    print(action .. ' ' .. subCat)
+    if action ~= 'Add Sub-Category' then
+        print('Sub-Category to ' .. action .. ':')
+        local subCat = user_choose(initData.subCats) -- get the sub-category to do action on
+        print()
     
-    if action == 'add' then
+        local split = string.find(subCat, '-')
+    
+        local category = string.sub(subCat, 1, split-1)
+        local sub_category = string.sub(subCat, split+1, #subCat)
+    
+        if sub_category == '1' then sub_category = 1 end -- override for default category (no sub category)
+    else
+        print('Category to ' .. action .. ':')
+        local category = user_choose(initData.categories) -- get the category to add the new sub-category to
+        print()
+    end
+
+    if action == 'Add Word' then
         print('Word to add:')
         local word = io.read()
-        
+        print()
+
         print('Description of word')
         local desc = io.read()
-        
+        print()
+
         modem.transmit(SEND_PORT, RECV_PORT, {
             action = 'add',
             word = word,
@@ -55,12 +67,14 @@ while true do
             category = category,
             sub_category = sub_category
         })
-    elseif action == 'remove' then
+    elseif action == 'Remove Word' then
         modem.transmit(SEND_PORT, RECV_PORT, {action='get_words', category=category, sub_category=sub_category})
-        local _, _, _, _, wordChoices, _ = os.pullEvent('modem_message')
+        local _, _, _, _, wordDescs, _ = os.pullEvent('modem_message')
 
-        local word = user_choose(wordChoices)
-
+        local wordDesc = user_choose(wordDescs)
+        local split = string.find(wordDesc, ':')
+        local word = string.sub(wordDesc, 1, split-1)
+        
         modem.transmit(SEND_PORT, RECV_PORT, {
             action = 'remove',
             word = word,
@@ -68,10 +82,11 @@ while true do
             sub_category = sub_category
         })
 
-    elseif action == 'get' then
+    elseif action == 'Get Words' then
         modem.transmit(SEND_PORT, RECV_PORT, {action='get_words', category=category, sub_category=sub_category})
         local _, _, _, _, wordDescs, _ = os.pullEvent('modem_message')
         
+        print()
         for i, wordDesc in ipairs(wordDescs) do
             local split = string.find(wordDesc, ':')
             local word = string.sub(wordDesc, 1, split-1)
@@ -79,7 +94,7 @@ while true do
             
             print(word .. ' - ' .. desc)
         end
-    elseif action == 'edit' then
+    elseif action == 'Edit Word' then
         modem.transmit(SEND_PORT, RECV_PORT, {action='get_words', category=category, sub_category=sub_category})
         local _, _, _, _, wordDescs, _ = os.pullEvent('modem_message')
 
