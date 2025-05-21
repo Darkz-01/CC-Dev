@@ -81,18 +81,23 @@ while true do
     elseif eventData[1] == 'modem_message' then
         local event, side, channel, replyChannel, message, distance = unpack(eventData)
         
-        if message.action == 'get_subcat' then
-            subCats = {}
-        
+        if message.action == 'init_addTo' then
+            local data = { -- get the category and sub category data
+                categories = {},
+                subCats = {} -- a representation of subcategories that include the category name
+            }
+
             for category, contents in pairs(tbl) do
-                for sub_category, _ in pairs(contents) do
-                    table.insert(subCats, category .. '-' .. sub_category)
+                table.insert(data.categories, category)
+                for sub_category, sub_tbl in pairs(contents) do
+                    table.insert(data.subCats, category .. ':' .. sub_category)
                 end
-            end            
-        
-            modem.transmit(replyChannel, RECV_PORT, subCats)
+            end
+            
+            modem.transmit(replyChannel, RECV_PORT, data) -- send back to computer requesting init
+
         elseif message.action == 'get_words' then
-            words = {}
+            local words = {}
             for word, desc in pairs(tbl[message.category][message.sub_category]) do
                 table.insert(words, word .. ':' .. desc)
             end
