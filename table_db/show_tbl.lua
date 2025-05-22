@@ -73,16 +73,16 @@ while true do
         if y - 5 < 1 then -- top: scroll up
             pos = pos - 1
             monitor.scroll(-1)
-            if lines[pos] then
+            if lines[pos + 1] then
                 monitor.setCursorPos(1, 1)
-                monitor.write(lines[pos+1])
+                monitor.write(lines[pos + 1])
             end
         elseif y + 5 > height then
             pos = pos + 1
             monitor.scroll(1)
             if lines[pos + height] then
                 monitor.setCursorPos(1, height)
-                monitor.write(lines[pos+height])
+                monitor.write(lines[pos + height])
             end
         end
     
