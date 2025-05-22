@@ -175,4 +175,10 @@ while true do
             new_name = new_name
         })
     end
+
+    if string.find(action, 'Sub-Category') then -- refresh initData if sub-category action
+        modem.transmit(SEND_PORT, RECV_PORT, {action='init_addTo'})
+        local _, _, _, _, initData_new, _ = os.pullEvent('modem_message')
+        initData = initData_new
+    end
 end
