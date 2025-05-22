@@ -38,6 +38,8 @@ while true do
     local action = user_choose(actions)
     print() -- spacing
 
+    local category, sub_category
+
     if action ~= 'Add Sub-Category' then
         print('Sub-Category to ' .. action .. ':')
         local subCat = user_choose(initData.subCats) -- get the sub-category to do action on
@@ -45,13 +47,13 @@ while true do
     
         local split = string.find(subCat, ':')
     
-        local category = string.sub(subCat, 1, split-1)
-        local sub_category = string.sub(subCat, split+1, #subCat)
+        category = string.sub(subCat, 1, split-1)
+        sub_category = string.sub(subCat, split+1, #subCat)
     
         if sub_category == '1' then sub_category = 1 end -- override for default category (no sub category)
     else
         print('Category to ' .. action .. ':')
-        local category = user_choose(initData.categories) -- get the category to add the new sub-category to
+        category = user_choose(initData.categories) -- get the category to add the new sub-category to
         print()
     end
 
