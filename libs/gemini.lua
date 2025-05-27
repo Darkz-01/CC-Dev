@@ -3,24 +3,56 @@
 local gemini = {}
 
 -- Configuration
-gemini.apiKey = nil
-gemini.apiEndpointBase = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent"
+gemini.config = {
+    apiKey = nil,
+    apiEndpointBase = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent",
+    -- Add other default configurations here if needed
+}
+
+-- Constants
+local CONTENT_TYPE_JSON = "application/json"
+local HTTP_SUCCESS = 200
 
 -- Error Handling
 local function error(msg)
-    return nil, msg
+    return nil, "[Gemini API Error] " .. msg
+end
+
+-- Logging function
+local function log(level, message)
+    print(string.format("[%s] [Gemini API] %s", level:upper(), message))
+end
+
+-- Internal function to load configuration from a file
+function gemini.loadConfig(path)
+    local file = fs.open(path, "r")
+    if file then
+        local content = file.readAll()
+        file.close()
+        local config, err = textutils.unserializeJSON(content)
+        if config then
+            for k, v in pairs(config) do
+                gemini.config[k] = v
+            end
+            log("INFO", "Configuration loaded from " .. path)
+        else
+            log("WARN", "Failed to load configuration from " .. path .. ": " .. (err or "Unknown error"))
+        end
+    else
+        log("WARN", "Configuration file not found at " .. path)
+    end
 end
 
 -- Internal function for making the HTTP request to Gemini
 local function makeRequest(prompt)
-    if not gemini.apiKey then
-        return error("API Key not set. Please set gemini.apiKey.")
+    if not gemini.config.apiKey then
+        return error("API Key not set. Please set gemini.apiKey or load configuration.")
     end
 
-    local apiEndpoint = gemini.apiEndpointBase .. "?key=" .. gemini.apiKey
+    local apiEndpoint = gemini.config.apiEndpointBase .. "?key=" .. gemini.config.apiKey
 
     local headers = {
-        ["Content-Type"] = "application/json",
+        ["Content-Type"] = CONTENT_TYPE_JSON,
     }
 
     local data = {
@@ -37,20 +69,22 @@ local function makeRequest(prompt)
 
     local encodedData = textutils.serializeJSON(data)
 
-    print(apiEndpoint)
-    print(encodedData)
-    print(headers)
+    if _DEBUG then -- Add a global _DEBUG flag for development
+        log("DEBUG", "API Endpoint: " .. apiEndpoint)
+        log("DEBUG", "Request Body: " .. encodedData)
+        log("DEBUG", "Headers: " .. textutils.serializeJSON(headers))
+    end
 
     local response = http.post(apiEndpoint, encodedData, headers)
 
     if not response then
-       return error("Failed to make HTTP request. Check network connection.")
+        return error("Failed to make HTTP request. Check network connection.")
     end
 
     local body = response.readAll()
     response.close()
 
-    if response.getResponseCode() ~= 200 then
+    if response.getResponseCode() ~= HTTP_SUCCESS then
         return error("API Error: HTTP " .. response.getResponseCode() .. "\n" .. body)
     end
 
@@ -64,10 +98,10 @@ end
 
 -- Function to get a response from Gemini
 function gemini.generateContent(prompt)
-   if not prompt or #prompt == 0 then
-       return error("Prompt cannot be empty.")
-   end
-   
+    if not prompt or #prompt == 0 then
+        return error("Prompt cannot be empty.")
+    end
+
     local jsonResponse, err = makeRequest(prompt)
 
     if not jsonResponse then
@@ -81,9 +115,9 @@ function gemini.generateContent(prompt)
     local firstCandidate = jsonResponse.candidates[1]
 
     if not firstCandidate or not firstCandidate.content or not firstCandidate.content.parts or #firstCandidate.content.parts == 0 then
-       return nil, error("No content parts found in response")
+        return nil, error("No content parts found in response")
     end
-   
+
     local responseText = ""
     for _, part in ipairs(firstCandidate.content.parts) do
         if part.text then
@@ -94,9 +128,10 @@ function gemini.generateContent(prompt)
     return responseText, nil
 end
 
--- Function to set the API key (you could just do this manually in the code with gemini.apiKey = "YOUR_API_KEY")
+-- Function to set the API key (can still be used, overrides config file)
 function gemini.setAPIKey(key)
-    gemini.apiKey = key
+    gemini.config.apiKey = key
+    log("INFO", "API Key set programmatically.")
 end
 
 return gemini
