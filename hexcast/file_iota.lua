@@ -1,9 +1,7 @@
-require("concat")
-
 local function main(process, file, delay, expectReturn, channel)
     if process == "read" then
         local iota = readIota(file)
-        print(concat(iota))
+        print(textutils.serialise(iota))
     elseif process == "load" then
         local iota = readIota(file)
         local port = peripheral.find("focal_port")
@@ -30,7 +28,7 @@ local function main(process, file, delay, expectReturn, channel)
             if type(out) ~= table then
                 print(tostring(out))
             else
-                print(concat(out))
+                print(textutils.serialise(out))
             end
         end
     end
@@ -51,7 +49,7 @@ function writeIota(file, iota, folder)
     io.output(folder .. "/" .. file .. ".hexIota")
     
     if type(iota) == "table" then
-        io.write(concat(iota))
+        io.write(textutils.serialise(iota))
     else
         io.write(tostring(iota))
     end
@@ -65,7 +63,7 @@ function readIota(file, folder)
         return nil
     end
 
-    return load("return " .. io.read("*all"))()
+    return textutils.unserialise(io.read())
 end
 
 
