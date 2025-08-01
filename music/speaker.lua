@@ -53,10 +53,10 @@ end
 local random = false
 if url == 'random' then random = true end
 
-local data = http.get(baseurl .. url)
- 
+
 while playCount ~= 0 do
     if random then url = get_random_url() end
+    local data = http.get(baseurl .. url)
     playCount = playCount - 1
     data.seek("set", 0)
     while true do
@@ -65,7 +65,7 @@ while playCount ~= 0 do
         
         local buffer = decoder(chunk)
  
-        while not speaker.playAudio(buffer) do
+        while not speaker.playAudio(buffer, volume) do
             os.pullEvent("speaker_audio_empty")
         end
     end
