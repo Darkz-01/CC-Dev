@@ -147,7 +147,7 @@ local function main(target, targetAmount, y_offset, facing)
         end
     end
     GoTo(-traveled.x, -traveled.y, -traveled.z)
-    Goto(0, -y_offset, 0)
+    GoTo(0, -y_offset, 0)
 end
 
 
