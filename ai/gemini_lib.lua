@@ -128,6 +128,17 @@ function gemini.generateContent(prompt)
     return responseText, nil
 end
 
+gemini.chat = {
+    chat_str = "",
+    init = function(self, system_prompt)
+        self.chat_str = system_prompt .. '\n\n'
+    end,
+    send_message = function(self, user, message)
+        self.chat_str = self.chat_str .. user .. ': ' .. message .. '\n\nYou: '
+        return gemini.generateContent(self.chat_str)
+    end
+}
+
 -- Function to set the API key (can still be used, overrides config file)
 function gemini.setAPIKey(key)
     gemini.config.apiKey = key
