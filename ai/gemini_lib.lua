@@ -5,7 +5,7 @@ local gemini = {}
 -- Configuration
 gemini.config = {
     apiKey = nil,
-    apiEndpointBase = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent",
+    apiEndpointBase = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
     -- Add other default configurations here if needed
 }
 
@@ -130,12 +130,20 @@ end
 
 gemini.chat = {
     chat_str = "",
-    init = function(self, system_prompt)
+    name = "Gemini",
+    init = function(self, system_prompt, name)
         self.chat_str = system_prompt .. '\n\n'
+        if name then
+            self.name = name
+        end
     end,
     send_message = function(self, user, message)
-        self.chat_str = self.chat_str .. user .. ': ' .. message .. '\n\nYou: '
-        return gemini.generateContent(self.chat_str)
+        self.chat_str = self.chat_str .. ("<%s>: %s\n\n{%s}: ").format(user, message, self.name)
+        local response, err = gemini.generateContent(self.chat_str)
+        if response then
+            self.chat_str = self.chat_str .. response .. '\n\n'
+        end
+        return response, err
     end
 }
 

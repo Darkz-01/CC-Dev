@@ -14,7 +14,7 @@ term.setCursorPos(1, 1)
 local gemini = require("gemini_lib")
 gemini.setAPIKey(apiKey)
 
-gemini.chat:init("You are a chatbot responding to message sent in a minecraft chat, you can only see and respond to message that contain your name")
+gemini.chat:init("You are a chatbot responding to messages sent in a minecraft chat, you can only see and respond to message that contain your name, when responding use short messages and only respond in plaintext", NAME)
 
 while true do
     local event, username, message, user_uuid, isHidden = os.pullEvent('chat')
