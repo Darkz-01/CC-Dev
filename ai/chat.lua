@@ -22,7 +22,7 @@ while true do
     if string.find(string.lower(message), string.lower(NAME)) then
         local response, err = gemini.chat:send_message(username, message)
         if response then
-            chatBox.sendMessage(response:match("^%s*(.*%S?)%s*$") or "", NAME, NAME_CONTAINER)
+            chatBox.sendMessage(response:gsub("^%s*(.-)%s*$", "%1"), NAME, NAME_CONTAINER) -- PIL2 trim
         else
             print(err)
         end
